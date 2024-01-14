@@ -113,6 +113,16 @@ func (input Input) templateVarsForScheme(scheme TemplateScheme) TemplateVars {
 			TemplateVar{defaultRegexes.ContainerName, input.ContainerName},
 			TemplateVar{defaultRegexes.ContainerID, containerID},
 			TemplateVar{defaultRegexes.Hostname, input.HostName},
+			TemplateVar{defaultRegexes.PodRFC3339StartTime, input.PodRFC3339StartTime},
+			TemplateVar{defaultRegexes.PodRFC3339FinishTime, input.PodRFC3339FinishTime},
+			TemplateVar{
+				defaultRegexes.PodUnixStartTime,
+				strconv.FormatInt(input.PodUnixStartTime, 10),
+			},
+			TemplateVar{
+				defaultRegexes.PodUnixFinishTime,
+				strconv.FormatInt(input.PodUnixFinishTime, 10),
+			},
 		)
 		if gotExtraTemplateVars {
 			vars = append(vars, input.ExtraTemplateVarsByScheme.Pod...)
@@ -177,20 +187,6 @@ func (input Input) templateVarsForScheme(scheme TemplateScheme) TemplateVars {
 		}
 	}
 
-	vars = append(
-		vars,
-		TemplateVar{defaultRegexes.PodRFC3339StartTime, input.PodRFC3339StartTime},
-		TemplateVar{defaultRegexes.PodRFC3339FinishTime, input.PodRFC3339FinishTime},
-		TemplateVar{
-			defaultRegexes.PodUnixStartTime,
-			strconv.FormatInt(input.PodUnixStartTime, 10),
-		},
-		TemplateVar{
-			defaultRegexes.PodUnixFinishTime,
-			strconv.FormatInt(input.PodUnixFinishTime, 10),
-		},
-	)
-
 	return vars
 }
 
@@ -214,9 +210,10 @@ func (p TemplateLogPlugin) GetTaskLogs(input Input) (Output, error) {
 			continue
 		}
 		taskLogs = append(taskLogs, &core.TaskLog{
-			Uri:           replaceAll(templateURI, templateVars),
-			Name:          p.DisplayName + input.LogName,
-			MessageFormat: p.MessageFormat,
+			Uri:              replaceAll(templateURI, templateVars),
+			Name:             p.DisplayName + input.LogName,
+			MessageFormat:    p.MessageFormat,
+			ShowWhilePending: p.ShowWhilePending,
 		})
 	}
 
