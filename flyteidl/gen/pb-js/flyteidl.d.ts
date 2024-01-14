@@ -5119,6 +5119,9 @@ export namespace flyteidl {
 
             /** TaskLog ttl */
             ttl?: (google.protobuf.IDuration|null);
+
+            /** TaskLog ShowWhilePending */
+            ShowWhilePending?: (boolean|null);
         }
 
         /** Represents a TaskLog. */
@@ -5141,6 +5144,9 @@ export namespace flyteidl {
 
             /** TaskLog ttl. */
             public ttl?: (google.protobuf.IDuration|null);
+
+            /** TaskLog ShowWhilePending. */
+            public ShowWhilePending: boolean;
 
             /**
              * Creates a new TaskLog instance using the specified properties.
